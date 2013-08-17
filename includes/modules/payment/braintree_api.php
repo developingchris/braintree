@@ -533,7 +533,7 @@ class braintree_api extends base {
 			} else if(preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
 
 				// If it's a 3000 code it's a processor failure
-				// From Braintree: 3000 class codes are problems with the back-end processing network, and don’t necessarily mean a problem with the card itself.
+				// From Braintree: 3000 class codes are problems with the back-end processing network, and donÂ’t necessarily mean a problem with the card itself.
 
 				$customer_error_msg = 'Your credit card appears to have been declined by your financial institution.';
 
@@ -773,6 +773,13 @@ class braintree_api extends base {
 		if(!isset($this->_check)) {
 			$check_query = $db->Execute("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_STATUS'");
 			$this->_check = !$check_query->EOF;
+      if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) { 
+        switch(MODULE_PAYMENT_BRAINTREE_VERSION) {
+          case '1.0.0':
+            //$db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
+						break;                     
+        }
+      }			
 		}
 
 		return $this->_check;
@@ -793,7 +800,8 @@ class braintree_api extends base {
 		}
 
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable this Payment Module', 'MODULE_PAYMENT_BRAINTREE_STATUS', 'True', 'Do you want to enable this payment module?', '6', '25', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '25', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Version', 'MODULE_PAYMENT_BRAINTREE_VERSION', '1.0.0', 'Version installed (do not change this value unless you would like the automatic upgrade to run)', '6', '25', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '25', now())");		
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Production or Sandbox', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'sandbox', '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing', '6', '25', 'zen_cfg_select_option(array(\'production\', \'sandbox\'), ', now())");
@@ -809,7 +817,20 @@ class braintree_api extends base {
 
 	function keys() {
 
-		$keys_list = array('MODULE_PAYMENT_BRAINTREE_STATUS', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', 'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', 'MODULE_PAYMENT_BRAINTREE_ZONE', 'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', 'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID', 'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'MODULE_PAYMENT_BRAINTREE_DEBUGGING');
+		$keys_list = array(
+			'MODULE_PAYMENT_BRAINTREE_STATUS',
+			'MODULE_PAYMENT_BRAINTREE_VERSION', 
+			'MODULE_PAYMENT_BRAINTREE_MERCHANTID', 
+			'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', 
+			'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', 
+			'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', 
+			'MODULE_PAYMENT_BRAINTREE_ZONE', 
+			'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', 
+			'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID', 
+			'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', 
+			'MODULE_PAYMENT_BRAINTREE_SERVER', 
+			'MODULE_PAYMENT_BRAINTREE_DEBUGGING'
+		);
 
 		return $keys_list;
 	}
