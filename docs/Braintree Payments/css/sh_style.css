@@ -3,6 +3,7 @@ pre.sh_sourceCode {
   color: black;
   font-style: normal;
   font-weight: normal;
+  overflow: scroll;
 }
 
 pre.sh_sourceCode .sh_keyword { color: blue; font-weight: bold; }           /* language keywords */
