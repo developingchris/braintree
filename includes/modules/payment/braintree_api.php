@@ -526,16 +526,15 @@ class braintree_api extends base {
 			} else if(preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
 
 				// If it's a 2000 code it's Card Declined
-				// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.
-
-				$customer_error_msg = 'Your credit card appears to have been declined by your financial institution.';
+				// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.				
+				$customer_error_msg = constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
 
 			} else if(preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
 
 				// If it's a 3000 code it's a processor failure
 				// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
 
-				$customer_error_msg = 'Your credit card appears to have been declined by your financial institution.';
+				$customer_error_msg = 'Processor Network Unavailable - Try Again.';
 
 			} else {
 
