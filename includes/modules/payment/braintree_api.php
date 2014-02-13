@@ -778,7 +778,7 @@ class braintree_api extends base {
 			$this->_check = !$check_query->EOF;
       if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
       	$this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-      	while ($this->version != '1.1.0') {  
+      	while ($this->version != '1.1.1') {  
 	        switch($this->version) {
 	          case '1.0.0':
 	            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
@@ -791,8 +791,13 @@ class braintree_api extends base {
 							$messageStack->add('Updated Braintree Payments to v1.1.0', 'success');
 							$this->version = '1.1.0';
 							break;
+	          case '1.1.0':
+	            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.1.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
+							$messageStack->add('Updated Braintree Payments to v1.1.1', 'success');
+							$this->version = '1.1.1';
+							break;							
             default:
-              $this->version = '1.1.0';
+              $this->version = '1.1.1';
               // break all the loops
               break 2;													                     
 	        }
@@ -818,7 +823,7 @@ class braintree_api extends base {
 		}
 
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable this Payment Module', 'MODULE_PAYMENT_BRAINTREE_STATUS', 'True', 'Do you want to enable this payment module?', '6', '25', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Version', 'MODULE_PAYMENT_BRAINTREE_VERSION', '1.1.0', 'Version installed (do not change this value unless you would like the automatic upgrade to run)', '6', '25', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Version', 'MODULE_PAYMENT_BRAINTREE_VERSION', '1.1.1', 'Version installed (do not change this value unless you would like the automatic upgrade to run)', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '25', now())");		
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '25', now())");
