@@ -56,7 +56,7 @@ class braintree_api extends base {
 		if((!defined('BRAINTREE_OVERRIDE_CURL_WARNING') || (defined('BRAINTREE_OVERRIDE_CURL_WARNING') && BRAINTREE_OVERRIDE_CURL_WARNING != 'True')) && !function_exists('curl_init')) $this->enabled = false;
 
 		$this->enableDebugging = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log File' || MODULE_PAYMENT_BRAINTREE_DEBUGGING =='Log and Email');
-		$this->emailAlerts = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log File' || MODULE_PAYMENT_BRAINTREE_DEBUGGING =='Log and Email' || MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Alerts Only');
+		$this->emailAlerts = (MODULE_PAYMENT_BRAINTREE_DEBUGGING =='Log and Email');
 		$this->sort_order = MODULE_PAYMENT_BRAINTREE_SORT_ORDER;
 		$this->order_pending_status = MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID;
 
@@ -558,7 +558,7 @@ class braintree_api extends base {
 						$order->customer['lastname'] . ' -- was attempting checkout.' . "\n\n" . 'Detailed Validation errors below: ' . "\n\n" . 
 						'Code: ' . $result->transaction->processorResponseCode . ' text: ' . $result->transaction->processorResponseText;
 
-			zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_SUBJECT, $detailedEmailMessage, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($detailedEmailMessage)), 'paymentalert');
+			if ($this->emailAlerts) zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_SUBJECT, $detailedEmailMessage, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($detailedEmailMessage)), 'paymentalert');
 
 			$messageStack->add_session('checkout_payment', $customer_error_msg, 'error');
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
@@ -589,7 +589,7 @@ class braintree_api extends base {
 				$detailedEmailMessage .= ($error->code . ": " . $error->message . "\n");
 			}
 
-			zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_SUBJECT, $detailedEmailMessage, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($detailedEmailMessage)), 'paymentalert');
+			if ($this->emailAlerts) zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_SUBJECT, $detailedEmailMessage, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML'=>nl2br($detailedEmailMessage)), 'paymentalert');
 
 			$messageStack->add_session('checkout_payment', $error_msg, 'error');
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
@@ -779,7 +779,7 @@ class braintree_api extends base {
       if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
       	$this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
       	while ($this->version != '1.1.0') {  
-	        switch(MODULE_PAYMENT_BRAINTREE_VERSION) {
+	        switch($this->version) {
 	          case '1.0.0':
 	            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
 	            $db->Execute("CREATE TABLE IF NOT EXISTS " . TABLE_BRAINTREE . " (  `braintree_id` int(11) NOT NULL AUTO_INCREMENT,  `order_id` int(11) NOT NULL,  `txn_type` varchar(256) NOT NULL,  `module_name` text NOT NULL,  `reason_code` text NOT NULL,  `payment_type` varchar(256) NOT NULL,  `payment_status` varchar(256) NOT NULL,  `pending_reason` varchar(256) NOT NULL,  `first_name` text NOT NULL,  `last_name` text NOT NULL,  `payer_business_name` text NOT NULL,  `address_name` text NOT NULL,  `address_street` text NOT NULL,  `address_city` text NOT NULL,  `address_state` text NOT NULL,  `address_zip` varchar(256) NOT NULL,  `address_country` varchar(256) NOT NULL,  `payer_email` text NOT NULL,  `payment_date` date NOT NULL,  `txn_id` varchar(256) NOT NULL,  `parent_txn_id` varchar(256) NOT NULL,  `num_cart_items` int(11) NOT NULL,  `settle_amount` decimal(10,0) NOT NULL,  `settle_currency` varchar(256) NOT NULL,  `exchange_rate` decimal(10,0) NOT NULL,  `date_added` date NOT NULL,  `module_mode` text NOT NULL,  PRIMARY KEY (`braintree_id`),  UNIQUE KEY `order_id` (`order_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1"); 
