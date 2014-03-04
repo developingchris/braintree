@@ -426,6 +426,7 @@ class braintree_api extends base {
 
 		$result = Braintree_Transaction::sale(array(
 			'amount' => $this->calc_order_amount($order->info['total'], 'USD'),
+                        'merchantAccountId' => MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID,
 			'creditCard' => array(
 				'number' => $cc_number,
 				'expirationMonth' => $cc_validation->cc_expiry_month,
@@ -827,6 +828,7 @@ class braintree_api extends base {
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '25', now())");		
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '25', now())");
+                $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account ID', 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID', '', 'Your Merchant Account ID, since you can run multipule stores under a single API this shoud look something like MyStore_instant', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Production or Sandbox', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'sandbox', '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing', '6', '25', 'zen_cfg_select_option(array(\'production\', \'sandbox\'), ', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BRAINTREE_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '25', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
@@ -852,7 +854,8 @@ class braintree_api extends base {
 			'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID', 
 			'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', 
 			'MODULE_PAYMENT_BRAINTREE_SERVER', 
-			'MODULE_PAYMENT_BRAINTREE_DEBUGGING'
+			'MODULE_PAYMENT_BRAINTREE_DEBUGGING',
+                        'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID'
 		);
 
 		return $keys_list;
