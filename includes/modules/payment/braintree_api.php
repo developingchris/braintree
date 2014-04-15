@@ -87,6 +87,11 @@ class braintree_api extends base {
 	function update_status() {
 		global $order, $db;
 
+		if(isset($_SESSION['currency']) && $_SESSION['currency'] !='')
+		$setcurrentcy = $_SESSION['currency'];
+		else
+		$setcurrentcy = "USD";
+		
 		// if store is not running in SSL, cannot offer credit card module, for PCI reasons
 		if(!defined('ENABLE_SSL') || ENABLE_SSL != 'true') {
 			$this->enabled = FALSE;
@@ -127,7 +132,7 @@ class braintree_api extends base {
 			}
 
 			// module cannot be used for purchase > $10,000 USD
-			$order_amount = $this->calc_order_amount($order->info['total'], 'USD');
+			$order_amount = $this->calc_order_amount($order->info['total'], $setcurrentcy);
 
 			if($order_amount > 10000) {
 				$this->enabled = false;
@@ -391,7 +396,10 @@ class braintree_api extends base {
 		$order->info['cc_owner'] = $_SESSION['customer_first_name'] . ' ' . $_SESSION['customer_last_name'];
 		$order->info['cc_expires'] = $cc_expdate_month . substr($cc_expdate_year, -2);
 		$order->info['ip_address'] = $cc_owner_ip;
-
+		if(isset($_SESSION['currency']) && $_SESSION['currency'] !='')
+		$setcurrentcy = $_SESSION['currency'];
+		else
+		$setcurrentcy = "USD";
 		// Prepare products list
 		// Example: 1x639 Ohio State Large Black $28
 
@@ -425,7 +433,7 @@ class braintree_api extends base {
 		try {
 
 		$result = Braintree_Transaction::sale(array(
-			'amount' => $this->calc_order_amount($order->info['total'], 'USD'),
+			'amount' => $this->calc_order_amount($order->info['total'], MODULE_PAYMENT_BRAINTREE_CURRENCY),
                         'merchantAccountId' => MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID,
 			'creditCard' => array(
 				'number' => $cc_number,
@@ -828,8 +836,9 @@ class braintree_api extends base {
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '25', now())");		
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '25', now())");
-                $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account ID', 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID', '', 'Your Merchant Account ID, since you can run multipule stores under a single API this shoud look something like MyStore_instant', '6', '25', now())");
+                $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account ID', 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID', '', 'Your Merchant Account ID, since you can run multiple stores under a single API this should look something like MyStore_instant', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Production or Sandbox', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'sandbox', '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing', '6', '25', 'zen_cfg_select_option(array(\'production\', \'sandbox\'), ', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account Currency', 'MODULE_PAYMENT_BRAINTREE_CURRENCY', 'USD', 'Your Merchant Account Settlement Currency, Example: USD, CAD, AUD - You can see your store currencies from the <a target=\"_blank\" href=\"currencies.php\">Localization/Currency</a>(Opens New Window).', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '25', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BRAINTREE_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '25', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', '2', 'Set the status of orders paid with this payment module to this value. <br /><strong>Recommended: Processing[2]</strong>', '6', '25', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
@@ -847,7 +856,8 @@ class braintree_api extends base {
 			'MODULE_PAYMENT_BRAINTREE_VERSION', 
 			'MODULE_PAYMENT_BRAINTREE_MERCHANTID', 
 			'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', 
-			'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', 
+			'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY',
+			'MODULE_PAYMENT_BRAINTREE_CURRENCY',
 			'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', 
 			'MODULE_PAYMENT_BRAINTREE_ZONE', 
 			'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', 
