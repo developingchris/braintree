@@ -132,7 +132,7 @@ class braintree_api extends base {
 			}
 
 			// module cannot be used for purchase > $10,000 USD
-			$order_amount = $this->calc_order_amount($order->info['total'], $setcurrentcy);
+			$order_amount = $this->calc_order_amount($order->info['total'], 'USD');
 
 			if($order_amount > 10000) {
 				$this->enabled = false;
@@ -396,10 +396,7 @@ class braintree_api extends base {
 		$order->info['cc_owner'] = $_SESSION['customer_first_name'] . ' ' . $_SESSION['customer_last_name'];
 		$order->info['cc_expires'] = $cc_expdate_month . substr($cc_expdate_year, -2);
 		$order->info['ip_address'] = $cc_owner_ip;
-		if(isset($_SESSION['currency']) && $_SESSION['currency'] !='')
-		$setcurrentcy = $_SESSION['currency'];
-		else
-		$setcurrentcy = MODULE_PAYMENT_BRAINTREE_CURRENCY;
+
 		// Prepare products list
 		// Example: 1x639 Ohio State Large Black $28
 
@@ -429,12 +426,21 @@ class braintree_api extends base {
 		$products_list = (strlen($products_list) > 255) ? substr($products_list,0,250).' ...' : $products_list;
 
 		$this->braintree_init();
-//MODULE_PAYMENT_BRAINTREE_CURRENC
+                $setcurrentcy = MODULE_PAYMENT_BRAINTREE_CURRENCY;
+//MODULE_PAYMENT_BRAINTREE_CURRENCY
+                if(isset($setcurrentcy) && $setcurrentcy != 'USD'){
+                    $merchant_account_id = MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID . $setcurrentcy;
+                }
+                else{
+                    $merchant_account_id = MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID;
+                    $setcurrentcy = 'USD';
+                }
+                
 		try {
 
 		$result = Braintree_Transaction::sale(array(
 			'amount' => $this->calc_order_amount($order->info['total'], $setcurrentcy),
-                        'merchantAccountId' => MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID . $setcurrentcy,
+                        'merchantAccountId' => $merchant_account_id,
 			'creditCard' => array(
 				'number' => $cc_number,
 				'expirationMonth' => $cc_validation->cc_expiry_month,
@@ -472,7 +478,7 @@ class braintree_api extends base {
 					'products_purchased' => $products_list
 				),*/
 			'options' => array(
-				'submitForSettlement' => true
+				'submitForSettlement' => MODULE_PAYMENT_BRAINTREE_SETTLEMENT
 			)
 		));
 
@@ -786,8 +792,8 @@ class braintree_api extends base {
 			$check_query = $db->Execute("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_STATUS'");
 			$this->_check = !$check_query->EOF;
       if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
-      	$this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-      	while ($this->version != '1.1.1') {  
+        $this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
+      	while ($this->version != '1.2.0') {  
 	        switch($this->version) {
 	          case '1.0.0':
 	            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
@@ -804,9 +810,15 @@ class braintree_api extends base {
 	            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.1.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
 							$messageStack->add('Updated Braintree Payments to v1.1.1', 'success');
 							$this->version = '1.1.1';
-							break;							
+							break;		
+                  case '1.1.1':
+                      $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Submit for Settlement', 'MODULE_PAYMENT_BRAINTREE_SETTLEMENT', 'true', 'Would you like to automatically Submit for Settlement?  Setting to false will only authorize and not submit for settlement (also know as capture) the transaction', '6', '14', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
+                      $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.0' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
+							$messageStack->add('Updated Braintree Payments to v1.2.0', 'success');
+							$this->version = '1.2.0';
+							break;	
             default:
-              $this->version = '1.1.1';
+              $this->version = '1.2.0';
               // break all the loops
               break 2;													                     
 	        }
@@ -831,20 +843,21 @@ class braintree_api extends base {
 			return 'failed';
 		}
 
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable this Payment Module', 'MODULE_PAYMENT_BRAINTREE_STATUS', 'True', 'Do you want to enable this payment module?', '6', '25', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Version', 'MODULE_PAYMENT_BRAINTREE_VERSION', '1.1.1', 'Version installed (do not change this value unless you would like the automatic upgrade to run)', '6', '25', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '25', now())");		
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '25', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '25', now())");
-                $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account ID', 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID', '', 'Your Merchant Account ID, since you can run multiple stores under a single API this should <strong>ONLY CONTAIN</strong> your <strong>Merchant Account Name</strong> Example: myaccountUSD Needs To be myaccount (REMOVE THE CURRENCY)', '6', '25', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Production or Sandbox', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'sandbox', '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing', '6', '25', 'zen_cfg_select_option(array(\'production\', \'sandbox\'), ', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account Default Currency', 'MODULE_PAYMENT_BRAINTREE_CURRENCY', 'USD', 'Your Merchant Account Settlement Currency, Example: USD, CAD, AUD - You can see your store currencies from the <a target=\"_blank\" href=\"currencies.php\">Localization/Currency</a>(Opens New Window).', '6', '25', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '25', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BRAINTREE_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '25', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', '2', 'Set the status of orders paid with this payment module to this value. <br /><strong>Recommended: Processing[2]</strong>', '6', '25', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Unpaid Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID', '1', 'Set the status of unpaid orders made with this payment module to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '25', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Refund Order Status', 'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', '1', 'Set the status of refunded orders to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '25', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Debug Mode', 'MODULE_PAYMENT_BRAINTREE_DEBUGGING', 'Off', 'Would you like to enable debug mode?  A complete detailed log of failed transactions will be emailed to the store owner.', '6', '25', 'zen_cfg_select_option(array(\'Off\', \'Alerts Only\', \'Log File\', \'Log and Email\'), ', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable this Payment Module', 'MODULE_PAYMENT_BRAINTREE_STATUS', 'True', 'Do you want to enable this payment module?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Version', 'MODULE_PAYMENT_BRAINTREE_VERSION', '1.2.0', 'Version installed (do not change this value unless you would like the automatic upgrade to run)', '6', '2', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '3', now())");		
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '4', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '5', now())");
+                $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account ID', 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID', '', 'Your Merchant Account ID, since you can run multiple stores under a single API this should <strong>ONLY CONTAIN</strong> your <strong>Merchant Account Name</strong> Example: myaccountUSD Needs To be myaccount (REMOVE THE CURRENCY)', '6', '6', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Production or Sandbox', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'sandbox', '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing', '6', '7', 'zen_cfg_select_option(array(\'production\', \'sandbox\'), ', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account Default Currency', 'MODULE_PAYMENT_BRAINTREE_CURRENCY', 'USD', 'Your Merchant Account Settlement Currency, Example: USD, CAD, AUD - You can see your store currencies from the <a target=\"_blank\" href=\"currencies.php\">Localization/Currency</a>(Opens New Window).', '6', '8', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '9', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BRAINTREE_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '10', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', '2', 'Set the status of orders paid with this payment module to this value. <br /><strong>Recommended: Processing[2]</strong>', '6', '11', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Unpaid Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID', '1', 'Set the status of unpaid orders made with this payment module to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '12', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Refund Order Status', 'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', '1', 'Set the status of refunded orders to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '13', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Debug Mode', 'MODULE_PAYMENT_BRAINTREE_DEBUGGING', 'Off', 'Would you like to enable debug mode?  A complete detailed log of failed transactions will be emailed to the store owner.', '6', '20', 'zen_cfg_select_option(array(\'Off\', \'Alerts Only\', \'Log File\', \'Log and Email\'), ', now())");
+                $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Submit for Settlement', 'MODULE_PAYMENT_BRAINTREE_SETTLEMENT', 'true', 'Would you like to automatically Submit for Settlement?  Setting to false will only authorize and not submit for settlement (also know as capture) the transaction', '6', '14', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
     $db->Execute("CREATE TABLE IF NOT EXISTS ".TABLE_BRAINTREE." (  `braintree_id` int(11) NOT NULL AUTO_INCREMENT,  `order_id` int(11) NOT NULL,  `txn_type` varchar(256) NOT NULL,  `module_name` text NOT NULL,  `reason_code` text NOT NULL,  `payment_type` varchar(256) NOT NULL,  `payment_status` varchar(256) NOT NULL,  `pending_reason` varchar(256) NOT NULL,  `first_name` text NOT NULL,  `last_name` text NOT NULL,  `payer_business_name` text NOT NULL,  `address_name` text NOT NULL,  `address_street` text NOT NULL,  `address_city` text NOT NULL,  `address_state` text NOT NULL,  `address_zip` varchar(256) NOT NULL,  `address_country` varchar(256) NOT NULL,  `payer_email` text NOT NULL,  `payment_date` date NOT NULL,  `txn_id` varchar(256) NOT NULL,  `parent_txn_id` varchar(256) NOT NULL,  `num_cart_items` int(11) NOT NULL,  `settle_amount` decimal(10,0) NOT NULL,  `settle_currency` varchar(256) NOT NULL,  `exchange_rate` decimal(10,0) NOT NULL,  `date_added` date NOT NULL,  `module_mode` text NOT NULL,  PRIMARY KEY (`braintree_id`),  UNIQUE KEY `order_id` (`order_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1"); 
 		$this->notify('NOTIFY_PAYMENT_BRAINTREE_INSTALLED');  
 	}
@@ -865,7 +878,8 @@ class braintree_api extends base {
 			'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', 
 			'MODULE_PAYMENT_BRAINTREE_SERVER', 
 			'MODULE_PAYMENT_BRAINTREE_DEBUGGING',
-                        'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID'
+                        'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID',
+                        'MODULE_PAYMENT_BRAINTREE_SETTLEMENT'
 		);
 
 		return $keys_list;
