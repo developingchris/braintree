@@ -35,7 +35,7 @@ class braintree_api extends base {
 
         // Set the title & description text based on the mode we're in
         if (IS_ADMIN_FLAG === true) {
-            $new_version_details = plugin_version_check_for_updates(1781, '1.2.1');
+            $new_version_details = plugin_version_check_for_updates(1781, MODULE_PAYMENT_BRAINTREE_VERSION);
             if ($new_version_details !== FALSE) {
                 $this->title .= '<span class="alert">' . ' - NOTE: A NEW VERSION OF THIS PLUGIN IS AVAILABLE. <a href="' . $new_version_details['link'] . '" target="_blank">[Details]</a>' . '</span>';
             }
@@ -785,7 +785,7 @@ class braintree_api extends base {
             $this->_check = !$check_query->EOF;
             if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
                 $this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-                while ($this->version != '1.2.0') {
+                while ($this->version != '1.2.1') {
                     switch ($this->version) {
                         case '1.0.0':
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
@@ -809,8 +809,13 @@ class braintree_api extends base {
                             $messageStack->add('Updated Braintree Payments to v1.2.0', 'success');
                             $this->version = '1.2.0';
                             break;
+                        case '1.2.0':
+                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
+                            $messageStack->add('Updated Braintree Payments to v1.2.1', 'success');
+                            $this->version = '1.2.1';
+                        case '1.2.1':                        
                         default:
-                            $this->version = '1.2.0';
+                            $this->version = '1.2.1';
                             // break all the loops
                             break 2;
                     }
