@@ -785,7 +785,7 @@ class braintree_api extends base {
             $this->_check = !$check_query->EOF;
             if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
                 $this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-                while ($this->version != '1.2.1') {
+                while ($this->version != '1.2.2') {
                     switch ($this->version) {
                         case '1.0.0':
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
