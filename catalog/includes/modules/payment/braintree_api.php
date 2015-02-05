@@ -21,6 +21,11 @@ class braintree_api extends base {
     var $_logLevel = 0;
 
     /**
+     * this module collects card-info onsite
+     */
+    var $collectsCardDataOnsite = TRUE;
+
+    /**
      * class constructor
      */
     function braintree_api() {
@@ -30,7 +35,7 @@ class braintree_api extends base {
 
         $this->code = 'braintree_api';
         $this->title = MODULE_PAYMENT_BRAINTREE_TEXT_ADMIN_TITLE;
-        $this->codeVersion = '1.0';
+        $this->codeVersion = MODULE_PAYMENT_BRAINTREE_VERSION;
         $this->enabled = (MODULE_PAYMENT_BRAINTREE_STATUS == 'True');
 
         // Set the title & description text based on the mode we're in
@@ -156,7 +161,7 @@ class braintree_api extends base {
 
             if ($order->info['total'] == 0) {
                 $this->enabled = false;
-                $this->zcLog('update_status', 'Module disabled because purchase amount is set to 0.00.' . "\n" . print_r($order, true));
+                /* $this->zcLog('update_status', 'Module disabled because purchase amount is set to 0.00.' . "\n" . print_r($order, true)); */
             }
         }
     }
@@ -351,13 +356,31 @@ class braintree_api extends base {
     }
 
     /**
+     * Zen Cart 1.5.4 Prepare the hidden fields comprising the parameters for the Submit button on the checkout confirmation page
+     */
+    function process_button_ajax() {
+        global $order;
+        $processButton = array('ccFields' => array('bt_cc_type' => 'braintree_cc_type',
+                'bt_cc_expdate_month' => 'braintree_cc_expires_month',
+                'bt_cc_expdate_year' => 'braintree_cc_expires_year',
+                'bt_cc_issuedate_month' => 'braintree_cc_issue_month',
+                'bt_cc_issuedate_year' => 'braintree_cc_issue_year',
+                'bt_cc_issuenumber' => 'braintree_cc_issuenumber',
+                'bt_cc_number' => 'braintree_cc_number',
+                'bt_cc_checkcode' => 'braintree_cc_checkcode',
+                'bt_payer_firstname' => 'braintree_cc_firstname',
+                'bt_payer_lastname' => 'braintree_cc_lastname',
+            ), 'extraFields' => array(zen_session_name() => zen_session_id()));
+        return $processButton;
+    }
+
+    /**
      * Prepare and submit the final authorization to Braintree via the appropriate means as configured
      */
     function before_process() {
         global $order, $messageStack;
 
-        $this->zcLog('before_process - DP-1', 'Beginning DP mode' /* . print_r($_POST, TRUE) */);
-
+        //$this->zcLog('before_process - DP-1', 'Beginning DP mode' . print_r($_POST, TRUE));
         // Validate credit card data
         include(DIR_WS_CLASSES . 'cc_validation.php');
         $cc_validation = new cc_validation();
@@ -404,7 +427,6 @@ class braintree_api extends base {
         $order->info['ip_address'] = $cc_owner_ip;
 
         // Prepare products list
-        // Example: 1x639 Ohio State Large Black $28
 
         for ($i = 0; $i < sizeof($order->products); $i++) {
 
@@ -440,50 +462,53 @@ class braintree_api extends base {
         }
 
         try {
-
-            $result = Braintree_Transaction::sale(array(
-                        'amount' => $this->calc_order_amount($order->info['total'], $setcurrentcy),
-                        'merchantAccountId' => $merchant_account_id,
-                        'creditCard' => array(
-                            'number' => $cc_number,
-                            'expirationMonth' => $cc_validation->cc_expiry_month,
-                            'expirationYear' => $cc_validation->cc_expiry_year,
-                            'cardholderName' => $order->billing['firstname'] . '' . $order->billing['lastname'],
-                            'cvv' => $cc_checkcode
-                        ),
-                        'customer' => array(
-                            'firstName' => $order->customer['firstname'],
-                            'lastName' => $order->customer['lastname'],
-                            'phone' => $order->customer['telephone'],
-                            'email' => $order->customer['email_address']
-                        ),
-                        'billing' => array(
-                            'firstName' => $order->billing['firstname'],
-                            'lastName' => $order->billing['lastname'],
-                            'streetAddress' => $order->billing['street_address'],
-                            'extendedAddress' => $order->billing['suburb'],
-                            'locality' => $order->billing['city'],
-                            'region' => $order->billing['state'],
-                            'postalCode' => $order->billing['postcode'],
-                            'countryCodeAlpha2' => $order->billing['country']['iso_code_2']
-                        ),
-                        'shipping' => array(
-                            'firstName' => $order->delivery['firstname'],
-                            'lastName' => $order->delivery['lastname'],
-                            'streetAddress' => $order->delivery['street_address'],
-                            'extendedAddress' => $order->delivery['suburb'],
-                            'locality' => $order->delivery['city'],
-                            'region' => $order->delivery['state'],
-                            'postalCode' => $order->delivery['postcode'],
-                            'countryCodeAlpha2' => $order->delivery['country']['iso_code_2']
-                        ), /*
-                          'customFields' => array(
-                          'products_purchased' => $products_list
-                          ), */
-                        'options' => array(
-                            'submitForSettlement' => MODULE_PAYMENT_BRAINTREE_SETTLEMENT
-                        )
+            $transaction_array = array(
+                'amount' => $this->calc_order_amount($order->info['total'], $setcurrentcy),
+                'merchantAccountId' => $merchant_account_id,
+                'creditCard' => array(
+                    'number' => $cc_number,
+                    'expirationMonth' => $cc_validation->cc_expiry_month,
+                    'expirationYear' => $cc_validation->cc_expiry_year,
+                    'cardholderName' => $order->billing['firstname'] . '' . $order->billing['lastname'],
+                    'cvv' => $cc_checkcode
+                ),
+                'customer' => array(
+                    'firstName' => $order->customer['firstname'],
+                    'lastName' => $order->customer['lastname'],
+                    'phone' => $order->customer['telephone'],
+                    'email' => $order->customer['email_address']
+                ),
+                'billing' => array(
+                    'firstName' => $order->billing['firstname'],
+                    'lastName' => $order->billing['lastname'],
+                    'streetAddress' => $order->billing['street_address'],
+                    'extendedAddress' => $order->billing['suburb'],
+                    'locality' => $order->billing['city'],
+                    'region' => $order->billing['state'],
+                    'postalCode' => $order->billing['postcode'],
+                    'countryCodeAlpha2' => $order->billing['country']['iso_code_2']
+                ),
+                'shipping' => array(
+                    'firstName' => $order->delivery['firstname'],
+                    'lastName' => $order->delivery['lastname'],
+                    'streetAddress' => $order->delivery['street_address'],
+                    'extendedAddress' => $order->delivery['suburb'],
+                    'locality' => $order->delivery['city'],
+                    'region' => $order->delivery['state'],
+                    'postalCode' => $order->delivery['postcode'],
+                    'countryCodeAlpha2' => $order->delivery['country']['iso_code_2']
+                ), /*
+                  'customFields' => array(
+                  'products_purchased' => $products_list
+                  ), */
+                'options' => array(
+                    'submitForSettlement' => MODULE_PAYMENT_BRAINTREE_SETTLEMENT
             ));
+
+
+            $result = Braintree_Transaction::sale($transaction_array);
+
+
 
             if ($result->success) {
 
@@ -785,7 +810,7 @@ class braintree_api extends base {
             $this->_check = !$check_query->EOF;
             if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
                 $this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-                while ($this->version != '1.2.2') {
+                while ($this->version != '1.3.0') {
                     switch ($this->version) {
                         case '1.0.0':
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
@@ -817,14 +842,18 @@ class braintree_api extends base {
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.2' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
                             $messageStack->add('Updated Braintree Payments to v1.2.2', 'success');
                             global $sniffer;
-                            
-                            if($sniffer->table_exists('braintree') && TABLE_BRAINTREE != 'braintree'){
-                                $db->Execute("RENAME TABLE `braintree` TO `".TABLE_BRAINTREE."`");
+
+                            if ($sniffer->table_exists('braintree') && TABLE_BRAINTREE != 'braintree') {
+                                $db->Execute("RENAME TABLE `braintree` TO `" . TABLE_BRAINTREE . "`");
                             }
                             $this->version = '1.2.2';
-                        case '1.2.2':                        
+                        case '1.2.2':
+                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.0' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
+                            $messageStack->add('Updated Braintree Payments to v1.3.0', 'success');
+                            $this->version = '1.3.0';
+                        case '1.3.0':
                         default:
-                            $this->version = '1.2.2';
+                            $this->version = '1.3.0';
                             // break all the loops
                             break 2;
                     }
