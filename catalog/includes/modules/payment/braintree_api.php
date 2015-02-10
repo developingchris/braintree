@@ -810,7 +810,7 @@ class braintree_api extends base {
             $this->_check = !$check_query->EOF;
             if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
                 $this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-                while ($this->version != '1.3.0') {
+                while ($this->version != '1.3.1') {
                     switch ($this->version) {
                         case '1.0.0':
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
@@ -838,6 +838,7 @@ class braintree_api extends base {
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
                             $messageStack->add('Updated Braintree Payments to v1.2.1', 'success');
                             $this->version = '1.2.1';
+                            break;
                         case '1.2.1':
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.2' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
                             $messageStack->add('Updated Braintree Payments to v1.2.2', 'success');
@@ -847,13 +848,20 @@ class braintree_api extends base {
                                 $db->Execute("RENAME TABLE `braintree` TO `" . TABLE_BRAINTREE . "`");
                             }
                             $this->version = '1.2.2';
+                            break;
                         case '1.2.2':
                             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.0' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
                             $messageStack->add('Updated Braintree Payments to v1.3.0', 'success');
                             $this->version = '1.3.0';
+                            break;
                         case '1.3.0':
+                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
+                            $messageStack->add('Updated Braintree Payments to v1.3.0', 'success');
+                            $this->version = '1.3.1';
+                            break;
+                        case '1.3.1':
                         default:
-                            $this->version = '1.3.0';
+                            $this->version = '1.3.1';
                             // break all the loops
                             break 2;
                     }
