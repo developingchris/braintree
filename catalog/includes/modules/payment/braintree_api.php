@@ -803,7 +803,7 @@ class braintree_api extends base {
      * Evaluate installation status of this module. Returns true if the status key is found.
      */
     function check() {
-        global $db;
+        global $db,$messageStack;
 
         if (!isset($this->_check)) {
             $check_query = $db->Execute("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_STATUS'");
