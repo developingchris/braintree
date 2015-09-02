@@ -1,180 +1,213 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Braintree Payments Documentation</title>
-        <link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
-        <link href="css/sh_style.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
-        <script type="text/javascript" src="js/sh_main.min.js"></script>
-        <script type="text/javascript" src="js/sh_html.min.js"></script>
-        <script type="text/javascript" src="js/sh_php.min.js"></script>
-        <script type="text/javascript" src="js/sh_javascript.min.js"></script>
-        <script type="text/javascript" src="js/sh_sql.min.js"></script>
-        <script type="text/javascript" src="js/sh_css.min.js"></script>
-        <script type="text/javascript" src="js/documentation.js"></script>
-    </head>
-    <body>
-        <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative; margin: auto; text-align: center;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://www.theie6countdown.com/images/banners/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div> <![endif]--> 
-        <!--BOF Header-->
-        <div id="headerContainer">
-            <a name="top"></a>
-            <div id="headerWrapper">
-                <div class="contentWrapper">
-                    <img src="images/logo.png" alt="Numinix.com" title="Numinix" id="logo" class="headerContent" />
-                    <span id="header" class="headerContent forward">Installation Instructions for Braintree Payments</span>
-                    <br class="clearBoth" />
-                </div>
-            </div>
-            <!--BOF Links-->
-            <div class="contentWrapper" id="headerButton">
-                <a href="#install" class="btn install" title="Installation">Installation</a>
-                <a href="#tips" class="btn tips" title="Tips">Tips</a>
-                <a href="#uninstall" class="btn uninstall" title="Uninstall">Uninstall</a>
-                <a href="#help" class="btn help" title="Help">Help</a>
-            </div>
-            <!--EOF Links-->
-        </div>
-        <!--EOF Header-->
-        <div class="contentWrapper">
-            <!--BOF About Us-->
-            <div class="numHeader bodyHeader">
-                <span class="bodyHeaderTxt back">ABOUT US</span>
-                <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-            </div>
-            <div class="bodyWrapper">
-                <div class="spacer">
-                    <div class="bodyRow"><span class="bodyStrong">Title:</span><span class="content">Braintree Payment</span></div>
-                    <div class="bodyRow"><span class="bodyStrong">Author:</span><span class="content">Numinix</span></div>
-                    <div class="bodyRow"><span class="bodyStrong">Description:</span><span class="content">Add support for Braintree Payments in ZenCart</span></div>
-                    <div class="bodyRow"><span class="bodyStrong">Installation Level:</span><span class="content">Easy</span></div>
-                    <div class="bodyRow"><span class="bodyStrong">Installation Time:</span><span class="content">~ 10-15 minutes</span></div>
-                    <div class="bodyRow"><span class="bodyStrong">Author Notes:</span><span class="content">Zen Cart is the copyright of the Zen Cart Development Team.</span></div>
-                </div>
-            </div>
-            <!--EOF About Us-->
-            <!--BOF Disclalimer-->
-            <div class="bodyHeaderContainer">
-                <div class="numHeader bodyHeader">
-                    <span class="bodyHeaderTxt back">DISCLAIMER</span>
-                    <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-                </div>
-                <div class="bodyWrapper">
-                    <div class="spacer">
-                        This module is installed at your own risk.  If you are unsure of how to complete the installation procedure documented below, please view our help section for additional information.  Numinix Web Development LTD takes no responsibility for problems related to the installation of this module.
-                    </div>
-                </div>
-            </div>
-            <!--EOF Disclaimer-->
-            <!--BOF License-->
-            <div class="bodyHeaderContainer">
-                <div class="numHeader bodyHeader">
-                    <span class="bodyHeaderTxt back">LICENSE</span>
-                    <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-                </div>
-                <div class="bodyWrapper">
-                    <div class="spacer">
-                        Before installing this module, you agree to abide by these <a href="../../license.txt" target="_blank">license terms</a>.
-                        <br />
-                        <div class="centered" id="licenseAgreement">
-                            <input type="radio" value="1" name="license" /><label for="license">I agree</label>
-                            <input type="radio" value="0" name="license" /><label for="license">I disagree</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--EOF License-->
-            <div id="licenseAgreed">
-                <a name="install"></a>
-                <!--BOF INSTALLATION-->
-                <div class="bodyHeaderContainer">
-                    <div class="bodyHeader" id="green">
-                        <span class="bodyHeaderTxt back">INSTALLATION</span>
-                        <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-                    </div>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width">
+  <title>Braintree Payments</title>
+  <link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="css/sh_style.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="js/sh_main.min.js"></script>
+  <script type="text/javascript" src="js/sh_html.min.js"></script>
+  <script type="text/javascript" src="js/sh_php.min.js"></script>
+  <script type="text/javascript" src="js/sh_javascript.min.js"></script>
+  <script type="text/javascript" src="js/sh_sql.min.js"></script>
+  <script type="text/javascript" src="js/sh_css.min.js"></script>
+  <script type="text/javascript" src="js/documentation.js"></script>
+  <script src="//use.typekit.net/uhl4ygc.js"></script>
+  <script>try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+  <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative; margin: auto; text-align: center;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://www.theie6countdown.com/images/banners/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div> <![endif]--> 
+<div id="wrapper" class="tk-museo-slab">
+  <!--BOF Header-->
+  <div id="headerContainer">
+    <div id="mainMenu" class="headerWrapper">
 
-                    <div class="bodyWrapper">
-                        <ol>
-                            <li>Register an account with <a href="https://apply.braintreegateway.com/?partner_source=Numinix" target="_blank">Braintree</a>.</li>
-                            <li>Backup your database and all files.</li>
+      <div class="logoWrapper">
+        <img src="images/logo.png" alt="Numinix.com" title="Numinix" id="logo" class="headerLogo" />
+      </div>
+
+    <!--BOF Links-->
+    <div class="contentMenu">
+      <ul>
+        <li><a href="#" id="btnInstallation" class="btn" title="Installation">Installation</a></li>
+        <li><a href="#" id="btnInstallationTips" class="btn" title="Installation Tips">Tips</a></li>
+        <li><a href="#" id="btnUninstall" class="btn" title="Uninstall">Uninstall</a></li>
+        <li><a href="#" id="btnAbout" class="btn" title="About">About</a></li>
+        <li><a href="#" id="btnLicense" class="btn" title="License">License</a></li>
+        <li><a href="#" id="btnDisclaimer" class="btn" title="Disclaimer">Disclaimer</a></li>
+        <li><a href="#" id="btnHelp" class="btn" title="Help">Help</a></li>
+      </ul>
+    </div>
+    <!--EOF Links-->
+
+  </div>
+</div>
+  <div id="headerTitle">
+   <h1 class="clearBoth">Braintree Payments</h1>
+  </div>
+        <br class="clearBoth" />
+  <!--EOF Header-->
+  <div class="contentWrapper">
+
+    <!--BOF INSTALLATION-->
+      <div class="bodyHeaderContainer" id="Installation" >
+        <div class="bodyHeader" id="green">
+          <span class="bodyHeaderTxt">Installation</span>
+        </div>
+        <div class="bodyWrapper">
+          <ol>
+            <li>Register an account with <a href="https://apply.braintreegateway.com/?partner_source=Numinix" target="_blank">Braintree</a>.</li>
+            <li>Backup your database and all files.</li>
             <li>Upload all files in this package while maintaining the directory structure (rename YOUR_ADMIN to your admin folder)<br /><br />
-                            <li>
-                                <div class="bodyTxt">
-                                    If you are using Numinix's Fast and Easy AJAX Checkout mod (prior to v2.26.1) follow these two steps below:
-                                    Open includes/templates/YOUR_TEMPLATE/css/quick_checkout.css and add this at the bottom:
-                                    <div class="code">
-                                        <div class="codeTitle"><strong>Code:</strong> <span class="select">SELECT ALL</span></div>
-                                        <pre class="sh_php"><code>#quickCheckout .ccinfo input#braintree_api-cc-cvv {width: auto !important;}</code></pre>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="bodyTxt">
-                                    Open includes/templates/YOUR_TEMPLATE/templates/quick_checkout/tpl_modules_qc_payment.php:<br />
-                                    Find (Around Line 68):
-                                    <div class="code">
-                                        <div class="codeTitle"><strong>Code:</strong> <span class="select">SELECT ALL</span></div>
-                                        <pre class="sh_php"><code>if (SHOW_ACCEPTED_CREDIT_CARDS != '0' && in_array($selection[$i]['id'], array('paypaldp','payflowpro','authorizenet','authorizenet_aim','authorizenet_cim','cc'))) {</code></pre>
-                                    </div>
-                                    Replace with:
-                                    <div class="code">
-                                        <div class="codeTitle"><strong>Code:</strong> <span class="select">SELECT ALL</span></div>
-                                        <pre class="sh_php"><code>if (SHOW_ACCEPTED_CREDIT_CARDS != '0' && in_array($selection[$i]['id'], array('paypaldp','payflowpro','authorizenet','authorizenet_aim','authorizenet_cim','cc','braintree_api'))) {</code></pre>
-                                    </div> 
-                                </div>
-                            </li>    
-                            <li>Login to your admin and the configuration menu should be found under Modules->Payment.</li>
-                        </ol>
+            <li>
+                If you are using Numinix's Fast and Easy AJAX Checkout mod (prior to v2.26.1) follow these two steps below:
+                <br />
+                <ol>
+                  <li>Open <span class="break">includes/templates/YOUR_TEMPLATE/css/quick_checkout.css</span> and add this at the bottom:
+                    <div class="code">
+                      <div class="codeTitle"><span class="select">Select code</span></div>
+                      <pre class="sh_css"><code>#quickCheckout .ccinfo input#braintree_api-cc-cvv {width: auto !important;}</code></pre>
                     </div>
-                </div>
-                <!--EOF INSTALLATION-->
-                <a name="tips"></a>
-                <!--BOF TIPS-->
-                <div class="bodyHeaderContainer">
-                    <div class="bodyHeader" id="blue">
-                        <span class="bodyHeaderTxt back">TIPS</span>
-                        <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-                    </div>
-                    <div class="bodyWrapper">
-                        <ul>
-                            <li>The Braintree API requires PHP be compiled with the xmlwriter extension. Search for xmlwriter in Admin -> Version and see if it's enabled</li>
-                            <li>Make sure you have added the appropriate Merchant Key, Public Key, and Private Key that Braintree provides.</li>
-                            <li>The mod defaults to sandbox mode which helps with testing, make sure you're using the matching keys if you encounter problems.</li>
-                            <li>Make sure to switch it into Production and change the keys before going live.</li>
-                        </ul>
-                    </div>
-                </div>
-                <!--EOF TIPS-->
-                <a name="uninstall"></a>
-                <!--BOF UNINSTALL-->
-                <div class="bodyHeaderContainer">
-                    <div class="bodyHeader" id="red">
-                        <span class="bodyHeaderTxt back">UNINSTALL</span>
-                        <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-                    </div>
-                    <div class="bodyWrapper">
-                        <ol>
-                            <li>Uninstall the mod first by clicking the Remove button in Modules->Payment->Braintree</li>
-                            <li>Remove edits performed in the installation procedure above (if applicable).</li>
-                            <li>Delete all uploaded files from your store.</li>
-                        </ol>
-                    </div>
-                </div>
-                <!--EOF UNINSTALL-->
-            </div>
-            <a name="help"></a>
-            <!--BOF HELP-->
-            <div class="bodyHeaderContainer">
-                <div class="bodyHeader" id="orange">
-                    <span class="bodyHeaderTxt back">HELP</span>
-                    <div class="forward"><a href="#top"><img src="images/backToTop.png" width="115" height="22" alt="backtotop" /></a></div>
-                </div>
-                <div class="bodyWrapper">
-
-                </div>
-            </div>
-            <!--EOF HELP-->
+                  </li>
+                  <li>
+                      Open <span class="break">includes/templates/YOUR_TEMPLATE/templates/quick_checkout/tpl_modules_qc_payment.php</span>:<br />
+                      Find (Around Line 68):
+                      <div class="code">
+                        <div class="codeTitle"><span class="select">Select code</span></div>
+                        <pre class="sh_php"><code>if (SHOW_ACCEPTED_CREDIT_CARDS != '0' && in_array($selection[$i]['id'], array('paypaldp','payflowpro','authorizenet','authorizenet_aim','authorizenet_cim','cc'))) {</code></pre>
+                      </div>
+                          Replace with:
+                      <div class="code">
+                          <div class="codeTitle"><span class="select">Select code</span></div>
+                          <pre class="sh_php"><code>if (SHOW_ACCEPTED_CREDIT_CARDS != '0' && in_array($selection[$i]['id'], array('paypaldp','payflowpro','authorizenet','authorizenet_aim','authorizenet_cim','cc','braintree_api'))) {</code></pre>
+                      </div> 
+                  </li> 
+                </ol> 
+            </li>
+            <li>Login to your admin and the configuration menu should be found under Modules > Payment.</li>
+          </ol>
         </div>
-        <div id="footerContainer" class="bodyHeaderContainer">Copyright &copy; 2006-2013 Numinix Web Development LTD. Web design by Numinix</div>
-    </body>
+      </div>
+      <!--EOF INSTALLATION-->
+
+      <!--BOF TIPS-->
+      <div class="bodyHeaderContainer" id="InstallationTips">
+        <div class="bodyHeader" id="blue">
+          <span class="bodyHeaderTxt">Tips</span>
+         
+        </div>
+        <div class="bodyWrapper">
+          <ul>
+          <li>The Braintree API requires PHP be compiled with the xmlwriter extension. Search for xmlwriter in Admin > Version and see if it's enabled</li>
+          <li>Make sure you have added the appropriate Merchant Key, Public Key, and Private Key that Braintree provides.</li>
+          <li>The mod defaults to sandbox mode which helps with testing, make sure you're using the matching keys if you encounter problems.</li>
+          <li>Make sure to switch it into Production and change the keys before going live.</li>
+        </div>
+      </div>
+      <!--EOF TIPS-->
+
+      <!--BOF UNINSTALL-->
+      <div class="bodyHeaderContainer" id="Uninstall">
+        <div class="bodyHeader">
+          <span class="bodyHeaderTxt">Uninstall</span>
+          
+        </div>
+        <div class="bodyWrapper">
+          <ol>
+            <li>Uninstall the mod first by clicking the Remove button in Modules > Payment > Braintree</li>
+            <li>Remove edits performed in the installation procedure (if applicable).</li>
+            <li>Delete all uploaded files from your store.</li>
+          </ol>
+        </div>
+      </div>
+      <!--EOF UNINSTALL-->
+
+    <!--BOF About Us-->
+    <div class="bodyHeaderContainer" id="About">
+      <div class="numHeader bodyHeader">
+        <span class="bodyHeaderTxt">About the Plugin</span>
+      </div>
+      <div class="bodyWrapper">
+        <div class="spacer">
+         <div class="bodyRow"><span class="bodyStrong">Title:</span><span class="content">Braintree Payments</span></div>
+        <div class="bodyRow"><span class="bodyStrong">Author:</span><span class="content">Numinix</span></div>
+        <div class="bodyRow"><span class="bodyStrong">Description:</span><span class="content">Add support for Braintree Payments in ZenCart.</span></div>
+        <div class="bodyRow"><span class="bodyStrong">Installation Level:</span><span class="content">Easy</span></div>
+        <div class="bodyRow"><span class="bodyStrong">Installation Time:</span><span class="content">~ 10-15 minutes</span></div>
+        <div class="bodyRow"><span class="bodyStrong">Author Notes:</span><span class="content">Zen Cart is the copyright of the Zen Cart Development Team.</span></div>
+        </div>
+      </div>
+    </div>
+    <!--EOF About Us-->
+
+    <!--BOF License-->
+    <div class="bodyHeaderContainer" id="License">
+      <div class="numHeader bodyHeader">
+        <span class="bodyHeaderTxt">License</span>
+      </div>
+      <div class="bodyWrapper">
+        <div class="spacer">
+          <h3>END USER LICENSE AGREEMENT</h3>
+          <p>This copy of Fast and Easy AJAX Checkout ("the Software Product") and accompanying documentation is licensed and not sold. This Software Product is protected by copyright laws and treaties, as well as laws and treaties related to other forms of intellectual property. Numinix Web Development LLC or its subsidiaries, affiliates, and suppliers (collectively "Numinix") own intellectual property rights in the Software Product. The Licensee's ("you" or "your") license to download, use, copy, or change the Software Product is subject to these rights and to all the terms and conditions of this End User License Agreement ("Agreement").</p>
+          <h4>Acceptance</h4>
+          <p>YOU ACCEPT AND AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT BY SELECTING THE "ACCEPT" OPTION AND DOWNLOADING THE SOFTWARE PRODUCT OR BY INSTALLING, USING, OR COPYING THE SOFTWARE PRODUCT. YOU MUST AGREE TO ALL OF THE TERMS OF THIS AGREEMENT BEFORE YOU WILL BE ALLOWED TO DOWNLOAD THE SOFTWARE PRODUCT. IF YOU DO NOT AGREE TO ALL OF THE TERMS OF THIS AGREEMENT, YOU MUST SELECT "DECLINE" AND YOU MUST NOT INSTALL, USE, OR COPY THE SOFTWARE PRODUCT.</p>
+          <h4>License Grant</h4>
+          <p>This Agreement entitles you to install and use one copy of the Software Product. In addition, you may make one archival copy of the Software Product. The archival copy must be on a storage medium other than a hard drive, and may only be used for the reinstallation of the Software Product. This Agreement does not permit the installation or use of multiple copies of the Software Product, or the installation of the Software Product on more than one computer at any given time, on a system that allows shared used of applications, on a multi-user network, or on any configuration or system of computers that allows multiple users. Multiple copy use or installation is only allowed if you obtain an appropriate licensing agreement for each user and each copy of the Software Product. 
+          <h4>Restrictions on Transfer</h4>
+          <p>Without first obtaining the express written consent of Numinix, you may not assign your rights and obligations under this Agreement, or redistribute, encumber, sell, rent, lease, sublicense, or otherwise transfer your rights to the Software Product.</p>
+          <h4>Restrictions on Use</h4>
+          <p>You may not use, copy, or install the Software Product on any system with more than one computer, or permit the use, copying, or installation of the Software Product by more than one user or on more than one computer. If you hold multiple, validly licensed copies, you may not use, copy, or install the Software Product on any system with more than the number of computers permitted by license, or permit the use, copying, or installation by more users, or on more computers than the number permitted by license. You may not decompile, "reverse-engineer", disassemble, or otherwise attempt to derive the source code for the Software Product.</p>
+          <h4>Restrictions on Alteration</h4>
+          <p>You may not modify the Software Product or create any derivative work of the Software Product or its accompanying documentation. Derivative works include but are not limited to translations. You may not alter any files or libraries in any portion of the Software Product.
+          <h4>Restrictions on Copying</h4>
+          <p>You may not copy any part of the Software Product except to the extent that licensed use inherently demands the creation of a temporary copy stored in computer memory and not permanently affixed on storage medium. You may make one archival copy which must be stored on a medium other than a computer hard drive.</p>
+          <h4>Disclaimer of Warranties and Limitation of Liability</h4>
+          <p>UNLESS OTHERWISE EXPLICITLY AGREED TO IN WRITING BY NUMINIX, NUMINIX MAKES NO OTHER WARRANTIES, EXPRESS OR IMPLIED, IN FACT OR IN LAW, INCLUDING, BUT NOT LIMITED TO, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE OTHER THAN AS SET FORTH IN THIS AGREEMENT OR IN THE LIMITED WARRANTY DOCUMENTS PROVIDED WITH THE SOFTWARE PRODUCT.</p>
+          <p>Numinix makes no warranty that the Software Product will meet your requirements or operate under your specific conditions of use. Numinix makes no warranty that operation of the Software Product will be secure, error free, or free from interruption. YOU MUST DETERMINE WHETHER THE SOFTWARE PRODUCT SUFFICIENTLY MEETS YOUR REQUIREMENTS FOR SECURITY AND UNINTERRUPTABILITY. YOU BEAR SOLE RESPONSIBILITY AND ALL LIABILITY FOR ANY LOSS INCURRED DUE TO FAILURE OF THE SOFTWARE PRODUCT TO MEET YOUR REQUIREMENTS. NUMINIX WILL NOT, UNDER ANY CIRCUMSTANCES, BE RESPONSIBLE OR LIABLE FOR THE LOSS OF DATA ON ANY COMPUTER OR INFORMATION STORAGE DEVICE.</p>
+          <p>UNDER NO CIRCUMSTANCES SHALL NUMINIX, ITS DIRECTORS, OFFICERS, EMPLOYEES OR AGENTS BE LIABLE TO YOU OR ANY OTHER PARTY FOR INDIRECT, CONSEQUENTIAL, SPECIAL, INCIDENTAL, PUNITIVE, OR EXEMPLARY DAMAGES OF ANY KIND (INCLUDING LOST REVENUES OR PROFITS OR LOSS OF BUSINESS) RESULTING FROM THIS AGREEMENT, OR FROM THE FURNISHING, PERFORMANCE, INSTALLATION, OR USE OF THE SOFTWARE PRODUCT, HETHER DUE TO A BREACH OF CONTRACT, BREACH OF WARRANTY, OR THE NEGLIGENCE OF NUMINIX OR ANY OTHER PARTY, EVEN IF NUMINIX IS ADVISED BEFOREHAND OF THE POSSIBILITY OF SUCH DAMAGES. TO THE EXTENT THAT THE APPLICABLE JURISDICTION LIMITS NUMINIX'S ABILITY TO DISCLAIM ANY IMPLIED WARRANTIES, THIS DISCLAIMER SHALL BE EFFECTIVE TO THE MAXIMUM EXTENT PERMITTED.</p>
+          <h4>Limitation of Remedies and Damages</h4>
+          <p class="box">Your remedy for a breach of this Agreement or of any warranty included in this Agreement is the correction or replacement of the Software Product. Selection of whether to correct or replace shall be solely at the discretion of Numinix. Numinix reserves the right to substitute a functionally equivalent copy of the Software Product as a replacement. If Numinix is unable to provide a replacement or substitute Software Product or corrections to the Software Product, your sole alternate remedy shall be a refund of the purchase price for the Software Product exclusive of any costs for shipping and handling.</p>
+          <p>Any claim must be made within the applicable warranty period. All warranties cover only defects arising under normal use and do not include malfunctions or failure resulting from misuse, abuse, neglect, alteration, problems with electrical power, acts of nature, unusual temperatures or humidity, improper installation, or damage determined by Numinix to have been caused by you. All limited warranties on the Software Product are granted only to you and are non-transferable. You agree to indemnify and hold Numinix harmless from all claims, judgments, liabilities, expenses, or costs arising from your breach of this Agreement and/or acts or omissions.</p>
+          <h4>Governing Law, Jurisdiction and Costs</h4>
+          <p>This Agreement is governed by the laws of British Columbia, without regard to British Columbia's conflict or choice of law provisions.</p>
+          <h4>Severability</h4>
+          <p>If any provision of this Agreement shall be held to be invalid or unenforceable, the remainder of this Agreement shall remain in full force and effect. To the extent any express or implied restrictions are not permitted by applicable laws, these express or implied restrictions shall remain in force and effect to the maximum extent permitted by such applicable laws.</p>
+        </div>
+      </div>
+    </div>
+    <!--EOF License-->
+
+    <!--BOF Disclalimer-->
+    <div class="bodyHeaderContainer" id="Disclaimer">
+      <div class="numHeader bodyHeader">
+        <span class="bodyHeaderTxt">Disclaimer</span>
+      </div>
+      <div class="bodyWrapper">
+        <div class="spacer">
+          <p>This module is installed at your own risk.  If you are unsure of how to complete the installation procedure, please view our help section for additional information.  Numinix Web Development LTD takes no responsibility for problems related to the installation of this module.</p>
+        </div>
+      </div>
+    </div>
+    <!--EOF Disclaimer-->
+      
+    <!--BOF HELP-->
+    <div class="bodyHeaderContainer" id="Help">
+      <div class="bodyHeader">
+        <span class="bodyHeaderTxt">Help</span>
+      </div>
+      <div class="bodyWrapper">
+        <div class="spacer">
+          <div class="bodyRow"><span class="bodyStrong">Download Page:</span><span class="content"><a href="https://www.numinix.com/downloads/zen-cart-plugins/payment/braintree-payments" target="_blank">https://www.numinix.com/downloads/zen-cart-plugins/payment/braintree-payments</a></span></div>
+       
+          <div class="bodyRow"><span class="bodyStrong">Contact Us:</span><span class="content"><a href="http://www.numinix.com/support/" target="_blank">http://www.numinix.com/support/</a></span></div>
+        </div>
+      </div>
+    </div>
+    <!--EOF HELP-->
+  </div>
+  <div id="footerContainer">&copy; 2015 Numinix Web Development</div>
+</div>
+</body>
 </html>
