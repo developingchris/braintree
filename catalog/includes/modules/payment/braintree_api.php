@@ -66,7 +66,7 @@ class braintree_api extends base {
             $this->enabled = false;
 
         $this->enableDebugging = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log File' || MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email');
-        $this->emailAlerts = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email');
+        $this->emailAlerts = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email' || MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Alerts Only');
         $this->sort_order = MODULE_PAYMENT_BRAINTREE_SORT_ORDER;
         $this->order_pending_status = MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID;
 
